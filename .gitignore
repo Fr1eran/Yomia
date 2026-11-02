@@ -1,0 +1,114 @@
+# ==============================================================================
+# Build & Output Artifacts (.NET / C# / Avalonia)
+# ==============================================================================
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+publish/
+dist/
+
+# ==============================================================================
+# Visual Studio / MSBuild
+# ==============================================================================
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+*.pidb
+*.booproj
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/Public/
+
+# ==============================================================================
+# JetBrains Rider & ReSharper
+# ==============================================================================
+.idea/
+*.DotSettings.user
+_ReSharper*/
+*.ReSharper.user
+
+# ==============================================================================
+# Visual Studio Code
+# ==============================================================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# ==============================================================================
+# NuGet & Dependencies
+# ==============================================================================
+*.nupkg
+*.snupkg
+packages/
+!packages/build/
+project.lock.json
+project.assets.json
+
+# ==============================================================================
+# Testing & Code Coverage
+# ==============================================================================
+TestResults/
+[Tt]est[Rr]esult*/
+*.coverage
+*.coveragexml
+*.opencover.xml
+coverage.cobertura.xml
+
+# ==============================================================================
+# User Secrets, Local Configs, and Environment
+# ==============================================================================
+appsettings*.local.json
+*.local.json
+*.secrets.json
+.env
+.env.*
+!.env.example
+
+# ==============================================================================
+# Crash Dumps & Profiling
+# ==============================================================================
+*.stackdump
+*.dmp
+*.vsp
+*.vspx
+*.sap
+
+# ==============================================================================
+# OS Generated Files
+# ==============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+
+# Linux
+*~
+.directory
+.fuse_hidden*
+.Trash-*
