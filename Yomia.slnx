@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Yomia.Core/Yomia.Core.csproj" />
+    <Project Path="src/Yomia/Yomia.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Yomia.Core.Tests/Yomia.Core.Tests.csproj" />
+  </Folder>
+</Solution>
