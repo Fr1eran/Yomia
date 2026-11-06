@@ -15,8 +15,52 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <TextBox Text="{Binding Greeting}"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center" />
+    <Grid ColumnDefinitions="80,*">
+        <Border Grid.Column="0"
+                Background="{DynamicResource Surface}"
+                BorderBrush="{DynamicResource OutlineVariant}"
+                BorderThickness="0,0,1,0">
+            <DockPanel LastChildFill="False" Margin="0,16">
+
+                <StackPanel DockPanel.Dock="Top" Spacing="16" HorizontalAlignment="Center">
+
+                    <Button Classes="icon" ToolTip.Tip="Open comic file">
+                        <PathIcon Data="{StaticResource Icon_FileOpen}" />
+                    </Button>
+
+                    <Border Height="1" Width="32" Background="{DynamicResource OutlineVariant}" />
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                    <Button Classes="icon" ToolTip.Tip="Settings">
+                        <PathIcon Data="{StaticResource Icon_Settings}" />
+                    </Button>
+                </StackPanel>
+
+                <ListBox DockPanel.Dock="Top"
+                         Margin="0,12"
+                         Theme="{DynamicResource NavigationRailTheme}"
+                         SelectedIndex="0">
+                    <ListBoxItem ToolTip.Tip="Library">
+                        <PathIcon Data="{StaticResource Icon_Library}" />
+                    </ListBoxItem>
+                    <ListBoxItem ToolTip.Tip="Bookmark">
+                        <PathIcon Data="{StaticResource Icon_Bookmark}" />
+                    </ListBoxItem>
+                    <ListBoxItem ToolTip.Tip="History">
+                        <PathIcon Data="{StaticResource Icon_History}" />
+                    </ListBoxItem>
+                </ListBox>
+
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="24">
+            <TextBlock Text="Yomia Comic Reader Content Area"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource OnSurface}" />
+        </Grid>
+    </Grid>
 
 </Window>

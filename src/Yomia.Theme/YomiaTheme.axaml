@@ -1,0 +1,31 @@
+<!--
+  YomiaTheme - Root entry point for Yomia's custom Material 3 / Sumi & Washi theme.
+
+  This is a standalone, no-base theme for Avalonia (no Fluent/Simple theme dependency).
+  Resources are composed in dependency order:
+    1. Tokens (Color palettes, theme dictionaries, shapes, metrics)
+    2. Base (Window and visual layer infrastructure)
+    3. Controls (M3 ControlThemes for UI components)
+-->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Yomia.Theme.YomiaTheme">
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Design Tokens layer -->
+                <ResourceInclude Source="avares://Yomia.Theme/Tokens/Tokens.axaml" />
+                <ResourceInclude Source="avares://Yomia.Theme/Tokens/Icons.axaml" />
+
+                <!-- Base infrastructure layer -->
+                <ResourceInclude Source="avares://Yomia.Theme/Base/Window.axaml" />
+                <ResourceInclude Source="avares://Yomia.Theme/Base/PathIcon.axaml" />
+
+                <!-- Control themes layer -->
+                <ResourceInclude Source="avares://Yomia.Theme/Controls/TextBox.axaml" />
+                <ResourceInclude Source="avares://Yomia.Theme/Controls/Button.axaml" />
+                <ResourceInclude Source="avares://Yomia.Theme/Controls/NavigationRail.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
+</Styles>

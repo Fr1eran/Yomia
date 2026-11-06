@@ -1,0 +1,90 @@
+<!--
+  Tokens.axaml - Design Tokens for Yomia M3 theme (Sumi & Washi aesthetic).
+
+  Color architecture:
+    - Sourced from Material 3 semantic roles translated into Japanese monochrome printmaking values.
+    - Paired Color + SolidColorBrush per role:
+        - The Brush takes the bare role name (e.g., "Surface", "Primary", "OutlineVariant").
+        - The Color takes the role name + "Color" suffix (e.g., "SurfaceColor").
+    - Theme variants: "Dark" (carbon inkwell) and "Light" (washi paper base), keyed for ResourceDictionary.ThemeDictionaries.
+
+  Metrics & Geometry (theme-invariant, declared at root):
+    - Shape scale: CornerRadius tokens matching M3 rounded geometries.
+    - Spacing scale: Standard layout rhythm metrics.
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <!-- ===================================================================
+             DARK THEME (Carbon Deep / Sumi Inkwell)
+             =================================================================== -->
+        <ResourceDictionary x:Key="Dark">
+            <!-- Surface & Canvas -->
+            <Color x:Key="SurfaceColor">#FF0E0E10</Color>
+            <SolidColorBrush x:Key="Surface" Color="{StaticResource SurfaceColor}" />
+
+            <!-- Primary Ink / Accent -->
+            <Color x:Key="PrimaryColor">#FFFFFFFF</Color>
+            <SolidColorBrush x:Key="Primary" Color="{StaticResource PrimaryColor}" />
+
+            <!-- Outlines & Screentone Borders -->
+            <Color x:Key="OutlineVariantColor">#FF2E2E34</Color>
+            <SolidColorBrush x:Key="OutlineVariant" Color="{StaticResource OutlineVariantColor}" />
+
+            <!-- Typography & Content -->
+            <Color x:Key="OnSurfaceColor">#FFE2E2E6</Color>
+            <SolidColorBrush x:Key="OnSurface" Color="{StaticResource OnSurfaceColor}" />
+
+            <!-- Button text on primary fill -->
+            <Color x:Key="OnPrimaryColor">#FF1E1E22</Color>
+            <SolidColorBrush x:Key="OnPrimary" Color="{StaticResource OnPrimaryColor}" />
+
+            <!-- Hover/State layer containers -->
+            <Color x:Key="SurfaceContainerHighColor">#FF1E1E22</Color>
+            <SolidColorBrush x:Key="SurfaceContainerHigh" Color="{StaticResource SurfaceContainerHighColor}" />
+        </ResourceDictionary>
+
+        <!-- ===================================================================
+             LIGHT THEME (Washi Paper Base / Sumi Ink)
+             =================================================================== -->
+        <ResourceDictionary x:Key="Light">
+            <!-- Surface & Canvas -->
+            <Color x:Key="SurfaceColor">#FFF9F9FB</Color>
+            <SolidColorBrush x:Key="Surface" Color="{StaticResource SurfaceColor}" />
+
+            <!-- Primary Ink / Accent -->
+            <Color x:Key="PrimaryColor">#FF121214</Color>
+            <SolidColorBrush x:Key="Primary" Color="{StaticResource PrimaryColor}" />
+
+            <!-- Outlines & Screentone Borders -->
+            <Color x:Key="OutlineVariantColor">#FFE2E2E6</Color>
+            <SolidColorBrush x:Key="OutlineVariant" Color="{StaticResource OutlineVariantColor}" />
+
+            <!-- Typography & Content -->
+            <Color x:Key="OnSurfaceColor">#FF1A1C1D</Color>
+            <SolidColorBrush x:Key="OnSurface" Color="{StaticResource OnSurfaceColor}" />
+
+            <!-- Button text on primary fill -->
+            <Color x:Key="OnPrimaryColor">#FFFFFFFF</Color>
+            <SolidColorBrush x:Key="OnPrimary" Color="{StaticResource OnPrimaryColor}" />
+
+            <!-- Hover/State layer containers -->
+            <Color x:Key="SurfaceContainerHighColor">#FFE8E8EA</Color>
+            <SolidColorBrush x:Key="SurfaceContainerHigh" Color="{StaticResource SurfaceContainerHighColor}" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <!-- ===================================================================
+         SHAPE TOKENS (M3 Corner Radii Scale)
+         =================================================================== -->
+    <CornerRadius x:Key="ShapeCornerSmall">8</CornerRadius>
+    <CornerRadius x:Key="ShapeCornerMedium">16</CornerRadius>
+    <CornerRadius x:Key="ShapeCornerFull">9999</CornerRadius>
+
+    <!-- ===================================================================
+         SPACING & DIMENSION TOKENS
+         =================================================================== -->
+    <x:Double x:Key="SpacingSmall">8</x:Double>
+    <x:Double x:Key="SpacingMedium">16</x:Double>
+</ResourceDictionary>
