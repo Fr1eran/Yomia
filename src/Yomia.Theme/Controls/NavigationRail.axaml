@@ -1,66 +1,304 @@
-<ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <!-- Add Resources Here -->
-    <ControlTheme x:Key="NavigationRailItemTheme" TargetType="ListBoxItem">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource OnSurface}" />
-        <Setter Property="Padding" Value="0,4" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-        <Setter Property="Template">
-            <ControlTemplate>
-                <StackPanel Spacing="4" HorizontalAlignment="Center">
-                    <Border Name="PART_Indicator"
-                            Width="56"
-                            Height="32"
-                            CornerRadius="{DynamicResource ShapeCornerFull}"
-                            Background="Transparent">
-                        <Border.Transitions>
-                            <Transitions>
-                                <BrushTransition Property="Background" Duration="0:0:0.15" />
-                            </Transitions>
-                        </Border.Transitions>
-                        <ContentPresenter Name="PART_IconPresenter"
-                                          Foreground="{TemplateBinding Foreground}"
-                                          Content="{TemplateBinding Content}"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center" />
+    <Styles.Resources>
+        <!-- Private scrolling templates keep this rail independent of a global base theme. -->
+        <ControlTheme x:Key="NavigationRailScrollThumbTheme" TargetType="Thumb">
+            <Setter Property="Background" Value="{DynamicResource OnSurfaceVariant}" />
+            <Setter Property="MinHeight" Value="16" />
+            <Setter Property="Width" Value="4" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="{DynamicResource ShapeCornerFull}" />
+                </ControlTemplate>
+            </Setter>
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource Primary}" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="Background" Value="{DynamicResource Primary}" />
+            </Style>
+        </ControlTheme>
+
+        <ControlTheme x:Key="NavigationRailScrollPageButtonTheme" TargetType="RepeatButton">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}" />
+                </ControlTemplate>
+            </Setter>
+        </ControlTheme>
+
+        <ControlTheme x:Key="NavigationRailScrollBarTheme" TargetType="ScrollBar">
+            <Setter Property="Orientation" Value="Vertical" />
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Track IsDirectionReversed="True"
+                           Minimum="{TemplateBinding Minimum}"
+                           Maximum="{TemplateBinding Maximum}"
+                           Orientation="{TemplateBinding Orientation}"
+                           ViewportSize="{TemplateBinding ViewportSize}"
+                           DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                           Value="{TemplateBinding Value, Mode=TwoWay}">
+                        <Track.DecreaseButton>
+                            <RepeatButton Name="PART_PageUpButton"
+                                          Theme="{StaticResource NavigationRailScrollPageButtonTheme}"
+                                          AutomationProperties.Name="Page up" />
+                        </Track.DecreaseButton>
+                        <Track.IncreaseButton>
+                            <RepeatButton Name="PART_PageDownButton"
+                                          Theme="{StaticResource NavigationRailScrollPageButtonTheme}"
+                                          AutomationProperties.Name="Page down" />
+                        </Track.IncreaseButton>
+                        <Thumb Theme="{StaticResource NavigationRailScrollThumbTheme}"
+                               AutomationProperties.Name="Position" />
+                    </Track>
+                </ControlTemplate>
+            </Setter>
+        </ControlTheme>
+
+        <ControlTheme x:Key="NavigationRailScrollViewerTheme" TargetType="ScrollViewer">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="AllowAutoHide" Value="False" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Grid ClipToBounds="True">
+                        <ScrollContentPresenter Name="PART_ContentPresenter"
+                                                Padding="{TemplateBinding Padding}"
+                                                Background="{TemplateBinding Background}"
+                                                HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
+                                                VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}"
+                                                HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
+                                                VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
+                                                ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}">
+                            <ScrollContentPresenter.GestureRecognizers>
+                                <ScrollGestureRecognizer x:DataType="ScrollContentPresenter"
+                                                         CanHorizontallyScroll="{Binding CanHorizontallyScroll, ElementName=PART_ContentPresenter}"
+                                                         CanVerticallyScroll="{Binding CanVerticallyScroll, ElementName=PART_ContentPresenter}"
+                                                         IsScrollInertiaEnabled="{Binding (ScrollViewer.IsScrollInertiaEnabled), ElementName=PART_ContentPresenter}"
+                                                         Offset="{Binding Offset, ElementName=PART_ContentPresenter}"
+                                                         Viewport="{Binding Viewport, ElementName=PART_ContentPresenter}"
+                                                         Extent="{Binding Extent, ElementName=PART_ContentPresenter}" />
+                            </ScrollContentPresenter.GestureRecognizers>
+                        </ScrollContentPresenter>
+                        <!-- Native ScrollBar attaches to its ScrollViewer templated parent.
+                             Leave range, offset, viewport and visibility unset for that binding. -->
+                        <ScrollBar Name="PART_VerticalScrollBar"
+                                   Theme="{StaticResource NavigationRailScrollBarTheme}"
+                                   Orientation="Vertical" Width="8" HorizontalAlignment="Right" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter>
+        </ControlTheme>
+
+        <ControlTheme x:Key="NavigationRailItemTheme" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusAdorner" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                        <!-- M3 selected-label approximation: 44/64 DIP resting heights.
+                             Numeric layout transitions deliberately do not conserve group height. -->
+                        <StackPanel Spacing="0">
+                            <Panel Width="56" Height="32" HorizontalAlignment="Center">
+                                <Border Name="PART_SelectedIndicator"
+                                        CornerRadius="{DynamicResource ShapeCornerFull}"
+                                        Background="{DynamicResource SecondaryContainer}">
+                                    <Border.Transitions>
+                                        <Transitions>
+                                            <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseInOut" />
+                                        </Transitions>
+                                    </Border.Transitions>
+                                </Border>
+                                <Border Name="PART_StateLayer" CornerRadius="{DynamicResource ShapeCornerFull}">
+                                    <Border.Transitions>
+                                        <Transitions>
+                                            <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseInOut" />
+                                        </Transitions>
+                                    </Border.Transitions>
+                                </Border>
+                                <ContentPresenter Name="PART_ContentPresenter"
+                                                  Content="{TemplateBinding Content}"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <Border Name="PART_FocusRing" BorderThickness="2"
+                                        CornerRadius="{DynamicResource ShapeCornerFull}"
+                                        IsHitTestVisible="False" />
+                            </Panel>
+                            <Border Name="PART_LabelGap">
+                                <Border.Transitions>
+                                    <Transitions>
+                                        <DoubleTransition Property="Height" Duration="0:0:0.2" Easing="CubicEaseInOut" />
+                                    </Transitions>
+                                </Border.Transitions>
+                            </Border>
+                            <Border Name="PART_LabelHost" ClipToBounds="True">
+                                <Border.Transitions>
+                                    <Transitions>
+                                        <DoubleTransition Property="Height" Duration="0:0:0.2" Easing="CubicEaseInOut" />
+                                    </Transitions>
+                                </Border.Transitions>
+                                <TextBlock Name="PART_RailLabel" Text="{TemplateBinding Tag}"
+                                           FontSize="12" LineHeight="16" Height="16" FontWeight="Medium"
+                                           TextWrapping="NoWrap" TextAlignment="Center" Margin="0"
+                                           HorizontalAlignment="Center" VerticalAlignment="Top">
+                                    <TextBlock.Transitions>
+                                        <Transitions>
+                                            <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseInOut" />
+                                        </Transitions>
+                                    </TextBlock.Transitions>
+                                </TextBlock>
+                            </Border>
+                            <Border Height="12" />
+                        </StackPanel>
                     </Border>
-                </StackPanel>
-            </ControlTemplate>
-        </Setter>
+                </ControlTemplate>
+            </Setter>
 
-        <Style Selector="^:pointerover /template/ Border#PART_Indicator">
-            <Setter Property="Background" Value="{DynamicResource SurfaceContainerHigh}" />
-        </Style>
+            <!-- Defaults belong to styles, not local values, so state selectors can override them. -->
+            <Style Selector="^ /template/ Border#PART_SelectedIndicator">
+                <Setter Property="Opacity" Value="0" />
+            </Style>
+            <Style Selector="^ /template/ Border#PART_StateLayer">
+                <Setter Property="Background" Value="{DynamicResource OnSurface}" />
+                <Setter Property="Opacity" Value="0" />
+            </Style>
+            <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Foreground" Value="{DynamicResource OnSurfaceVariant}" />
+            </Style>
+            <Style Selector="^ /template/ Border#PART_FocusRing">
+                <Setter Property="BorderBrush" Value="Transparent" />
+            </Style>
+            <Style Selector="^ /template/ Border#PART_LabelGap">
+                <Setter Property="Height" Value="0" />
+            </Style>
+            <Style Selector="^ /template/ Border#PART_LabelHost">
+                <Setter Property="Height" Value="0" />
+            </Style>
+            <Style Selector="^ /template/ TextBlock#PART_RailLabel">
+                <Setter Property="Opacity" Value="0" />
+                <Setter Property="Foreground" Value="{DynamicResource OnSurfaceVariant}" />
+            </Style>
+            <Style Selector="^:pointerover:not(:disabled) /template/ Border#PART_StateLayer">
+                <Setter Property="Opacity" Value="{DynamicResource StateHoverOpacity}" />
+            </Style>
+            <Style Selector="^:pressed:not(:disabled) /template/ Border#PART_StateLayer">
+                <Setter Property="Opacity" Value="{DynamicResource StatePressedOpacity}" />
+            </Style>
+            <!-- ListBox directional selection uses Focus() without a navigation method.
+                 Match focus itself so arrow-key focus remains visible as well as Tab focus. -->
+            <Style Selector="^:focus /template/ Border#PART_FocusRing">
+                <Setter Property="BorderBrush" Value="{DynamicResource Primary}" />
+            </Style>
+            <Style Selector="^:selected /template/ Border#PART_SelectedIndicator">
+                <Setter Property="Opacity" Value="1" />
+            </Style>
+            <Style Selector="^:selected /template/ Border#PART_StateLayer">
+                <Setter Property="Background" Value="{DynamicResource OnSecondaryContainer}" />
+            </Style>
+            <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Foreground" Value="{DynamicResource OnSecondaryContainer}" />
+            </Style>
+            <Style Selector="^:selected /template/ Border#PART_LabelGap">
+                <Setter Property="Height" Value="4" />
+            </Style>
+            <Style Selector="^:selected /template/ Border#PART_LabelHost">
+                <Setter Property="Height" Value="16" />
+            </Style>
+            <Style Selector="^:selected /template/ TextBlock#PART_RailLabel">
+                <Setter Property="Opacity" Value="1" />
+                <Setter Property="Foreground" Value="{DynamicResource OnSurface}" />
+            </Style>
+            <Style Selector="^:disabled">
+                <Setter Property="Cursor" Value="Arrow" />
+            </Style>
+            <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Foreground" Value="{DynamicResource OnSurface38}" />
+            </Style>
+            <Style Selector="^:disabled /template/ TextBlock#PART_RailLabel">
+                <Setter Property="Foreground" Value="{DynamicResource OnSurface38}" />
+            </Style>
+            <Style Selector="^:disabled /template/ Border#PART_StateLayer">
+                <Setter Property="Opacity" Value="0" />
+            </Style>
+        </ControlTheme>
 
-        <Style Selector="^:selected">
-            <Setter Property="Foreground" Value="{DynamicResource OnPrimary}" />
-        </Style>
-        <Style Selector="^:selected /template/ Border#PART_Indicator">
-            <Setter Property="Background" Value="{DynamicResource Primary}" />
-        </Style>
-    </ControlTheme>
+        <ControlTheme x:Key="NavigationRailTheme" TargetType="ListBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="ItemContainerTheme" Value="{StaticResource NavigationRailItemTheme}" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
+            <Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="True" />
+            <Setter Property="ScrollViewer.AllowAutoHide" Value="False" />
+            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="0" />
+                </ItemsPanelTemplate>
+            </Setter>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <ScrollViewer Name="PART_ScrollViewer"
+                                      Theme="{StaticResource NavigationRailScrollViewerTheme}"
+                                      VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
+                                      HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
+                                      VerticalSnapPointsAlignment="{TemplateBinding (ScrollViewer.VerticalSnapPointsAlignment)}"
+                                      HorizontalSnapPointsAlignment="{TemplateBinding (ScrollViewer.HorizontalSnapPointsAlignment)}"
+                                      HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                                      VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+                                      IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+                                      IsScrollInertiaEnabled="{TemplateBinding (ScrollViewer.IsScrollInertiaEnabled)}"
+                                      IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
+                                      AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+                                      BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+                            <ItemsPresenter Name="PART_ItemsPresenter"
+                                            ItemsPanel="{TemplateBinding ItemsPanel}"
+                                            Margin="{TemplateBinding Padding}" />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </ControlTheme>
+    </Styles.Resources>
 
-    <ControlTheme x:Key="NavigationRailTheme" TargetType="ListBox">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="ItemContainerTheme" Value="{StaticResource NavigationRailItemTheme}" />
-        <Setter Property="ItemsPanel">
-            <ItemsPanelTemplate>
-                <StackPanel Spacing="12" />
-            </ItemsPanelTemplate>
+    <!-- Consumer content is not part of the item template; unclassified icons stay visible. -->
+    <Style Selector="ListBox.NavigationRail ListBoxItem PathIcon.RailIconNormal">
+        <Setter Property="Opacity" Value="1" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseInOut" />
+            </Transitions>
         </Setter>
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border Background="{TemplateBinding Background}">
-                    <ItemsPresenter Name="PART_ItemsPresenter"
-                                    ItemsPanel="{TemplateBinding ItemsPanel}"
-                                    Margin="{TemplateBinding Padding}" />
-                </Border>
-            </ControlTemplate>
+    </Style>
+    <Style Selector="ListBox.NavigationRail ListBoxItem PathIcon.RailIconSelected">
+        <Setter Property="Opacity" Value="0" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseInOut" />
+            </Transitions>
         </Setter>
-    </ControlTheme>
-</ResourceDictionary>
+    </Style>
+    <Style Selector="ListBox.NavigationRail ListBoxItem:selected PathIcon.RailIconNormal">
+        <Setter Property="Opacity" Value="0" />
+    </Style>
+    <Style Selector="ListBox.NavigationRail ListBoxItem:selected PathIcon.RailIconSelected">
+        <Setter Property="Opacity" Value="1" />
+    </Style>
+</Styles>

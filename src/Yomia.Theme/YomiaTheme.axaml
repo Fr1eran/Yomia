@@ -24,8 +24,8 @@
                 <!-- Control themes layer -->
                 <ResourceInclude Source="avares://Yomia.Theme/Controls/TextBox.axaml" />
                 <ResourceInclude Source="avares://Yomia.Theme/Controls/Button.axaml" />
-                <ResourceInclude Source="avares://Yomia.Theme/Controls/NavigationRail.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
+    <StyleInclude Source="avares://Yomia.Theme/Controls/NavigationRail.axaml" />
 </Styles>

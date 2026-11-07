@@ -7,7 +7,9 @@
         x:Class="Yomia.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Yomia">
+        Title="Yomia"
+        Width="900" Height="640"
+        MinWidth="640" MinHeight="420">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -20,47 +22,62 @@
                 Background="{DynamicResource Surface}"
                 BorderBrush="{DynamicResource OutlineVariant}"
                 BorderThickness="0,0,1,0">
-            <DockPanel LastChildFill="False" Margin="0,16">
+            <!-- The star row bounds scrolling while short navigation lists remain bottom-aligned. -->
+            <Grid RowDefinitions="Auto,*" Margin="0,16">
 
-                <StackPanel DockPanel.Dock="Top" Spacing="16" HorizontalAlignment="Center">
+                <Button Grid.Row="0"
+                        AutomationProperties.Name="Open File"
+                        HorizontalAlignment="Center"
+                        Width="48"
+                        Height="48"
+                        CornerRadius="16"
+                        Background="{DynamicResource SecondaryContainer}"
+                        Foreground="{DynamicResource OnSecondaryContainer}"
+                        Padding="0">
+                    <PathIcon Data="{StaticResource IconFileOpen}" Width="20" Height="20"/>
+                </Button>
 
-                    <Button Classes="icon" ToolTip.Tip="Open comic file">
-                        <PathIcon Data="{StaticResource Icon_FileOpen}" />
-                    </Button>
-
-                    <Border Height="1" Width="32" Background="{DynamicResource OutlineVariant}" />
-                </StackPanel>
-
-                <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center">
-                    <Button Classes="icon" ToolTip.Tip="Settings">
-                        <PathIcon Data="{StaticResource Icon_Settings}" />
-                    </Button>
-                </StackPanel>
-
-                <ListBox DockPanel.Dock="Top"
-                         Margin="0,12"
-                         Theme="{DynamicResource NavigationRailTheme}"
+                <ListBox Grid.Row="1"
+                         VerticalAlignment="Bottom"
+                         Classes="NavigationRail"
+                         Theme="{StaticResource NavigationRailTheme}"
                          SelectedIndex="0">
-                    <ListBoxItem ToolTip.Tip="Library">
-                        <PathIcon Data="{StaticResource Icon_Library}" />
+
+                    <ListBoxItem Tag="Library" AutomationProperties.Name="Library">
+                        <Panel>
+                            <PathIcon Classes="RailIconNormal" Data="{StaticResource IconLibrary}"/>
+                            <PathIcon Classes="RailIconSelected" Data="{StaticResource IconLibraryFilled}"/>
+                        </Panel>
                     </ListBoxItem>
-                    <ListBoxItem ToolTip.Tip="Bookmark">
-                        <PathIcon Data="{StaticResource Icon_Bookmark}" />
+
+                    <ListBoxItem Tag="Bookmark" AutomationProperties.Name="Bookmark">
+                        <Panel>
+                            <PathIcon Classes="RailIconNormal" Data="{StaticResource IconBookmark}" />
+                            <PathIcon Classes="RailIconSelected" Data="{StaticResource IconBookmarkFilled}" />
+                        </Panel>
                     </ListBoxItem>
-                    <ListBoxItem ToolTip.Tip="History">
-                        <PathIcon Data="{StaticResource Icon_History}" />
+
+                    <ListBoxItem Tag="History" AutomationProperties.Name="History">
+                        <PathIcon Data="{StaticResource IconHistory}" />
+                    </ListBoxItem>
+
+                    <ListBoxItem Tag="Settings" AutomationProperties.Name="Settings">
+                        <Panel>
+                            <PathIcon Classes="RailIconNormal" Data="{StaticResource IconSettings}" />
+                            <PathIcon Classes="RailIconSelected" Data="{StaticResource IconSettingsFilled}" />
+                        </Panel>
                     </ListBoxItem>
                 </ListBox>
 
-            </DockPanel>
+            </Grid>
         </Border>
 
-        <Grid Grid.Column="1" Margin="24">
-            <TextBlock Text="Yomia Comic Reader Content Area"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Foreground="{DynamicResource OnSurface}" />
-        </Grid>
+        <TextBlock Grid.Column="1"
+                   Text="Yomia Comic Reader Content Area"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Foreground="{DynamicResource OnSurface}"
+                   Margin="24" />
     </Grid>
 
 </Window>
