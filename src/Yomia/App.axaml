@@ -1,9 +1,9 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Yomia.App"
              xmlns:local="using:Yomia"
-             xmlns:theme="using:Yomia.Theme"
-             RequestedThemeVariant="Light">
+             xmlns:shadui="using:ShadUI"
+             x:Class="Yomia.App"
+             RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
@@ -11,7 +11,6 @@
     </Application.DataTemplates>
 
     <Application.Styles>
-        <!-- <FluentTheme /> -->
-        <theme:YomiaTheme />
+        <shadui:ShadTheme />
     </Application.Styles>
 </Application>

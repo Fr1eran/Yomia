@@ -1,83 +1,174 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Yomia.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Yomia.Views.MainWindow"
-        x:DataType="vm:MainViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="Yomia"
-        Width="900" Height="640"
-        MinWidth="640" MinHeight="420">
+<shadUi:Window xmlns="https://github.com/avaloniaui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:vm="using:Yomia.ViewModels"
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:shadUi="using:ShadUI"
+               xmlns:converters="using:Yomia.Converters"
+               x:Class="Yomia.Views.MainWindow"
+               x:Name="RootWindow"
+               x:DataType="vm:MainViewModel"
+               Icon="/Assets/avalonia-logo.ico"
+               Title="Yomia"
+               TitleFontWeight="SemiBold"
+               SaveWindowState="True"
+               WindowStartupLocation="CenterScreen"
+               mc:Ignorable="d" d:DesignWidth="960" d:DesignHeight="600"
+               Width="960" Height="600"
+               MinWidth="640" MinHeight="420">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <Grid ColumnDefinitions="80,*">
-        <Border Grid.Column="0"
-                Background="{DynamicResource Surface}"
-                BorderBrush="{DynamicResource OutlineVariant}"
-                BorderThickness="0,0,1,0">
-            <!-- The star row bounds scrolling while short navigation lists remain bottom-aligned. -->
-            <Grid RowDefinitions="Auto,*" Margin="0,16">
+    <!-- TitleBar left side -->
+    <shadUi:Window.LogoContent>
+        <LucideIcon Kind="BookOpen" Size="16" Margin="10,0,0,0" />
+    </shadUi:Window.LogoContent>
 
-                <Button Grid.Row="0"
-                        AutomationProperties.Name="Open File"
-                        HorizontalAlignment="Center"
-                        Width="48"
-                        Height="48"
-                        CornerRadius="16"
-                        Background="{DynamicResource SecondaryContainer}"
-                        Foreground="{DynamicResource OnSecondaryContainer}"
-                        Padding="0">
-                    <PathIcon Data="{StaticResource IconFileOpen}" Width="20" Height="20"/>
-                </Button>
+    <!-- TitleBar right side -->
+    <shadUi:Window.RightWindowTitleBarContent>
+        <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,8,0">
+            <!-- Theme -->
+            <Button Background="{DynamicResource SidebarBackgroundColor}"
+                    Command="{Binding ToggleThemeCommand}"
+                    CornerRadius="{DynamicResource MdCornerRadius}"
+                    Height="30" Width="30"
+                    Padding="0"
+                    ToolTip.Tip="Toggle Theme">
+                <Panel>
+                    <LucideIcon Kind="Sun" Size="16"
+                                IsVisible="{Binding #RootWindow.ActualThemeVariant,
+                            Converter={x:Static converters:TitleBarConverters.IsNotDarkTheme}}" />
+                    <LucideIcon Kind="Moon" Size="16"
+                                IsVisible="{Binding #RootWindow.ActualThemeVariant,
+                            Converter={x:Static converters:TitleBarConverters.IsDarkTheme}}" />
+                </Panel>
+            </Button>
 
-                <ListBox Grid.Row="1"
-                         VerticalAlignment="Bottom"
-                         Classes="NavigationRail"
-                         Theme="{StaticResource NavigationRailTheme}"
-                         SelectedIndex="0">
+            <!-- Fullscreen -->
+            <Button Background="{DynamicResource SidebarBackgroundColor}"
+                    CornerRadius="{DynamicResource MdCornerRadius}"
+                    Height="30" Width="30"
+                    Padding="0"
+                    Click="OnToggleFullScreen"
+                    ToolTip.Tip="{Binding #RootWindow.WindowState,
+                    Converter={x:Static converters:TitleBarConverters.ToggleFullscreenTips}}">
+                <Panel>
+                    <LucideIcon Kind="Maximize" Size="16"
+                                IsVisible="{Binding #RootWindow.WindowState,
+                                Converter={x:Static converters:TitleBarConverters.IsNotFullScreen}}" />
+                    <LucideIcon Kind="Minimize" Size="16"
+                                IsVisible="{Binding #RootWindow.WindowState,
+                                Converter={x:Static converters:TitleBarConverters.IsFullScreen}}" />
+                </Panel>
+            </Button>
+        </StackPanel>
+    </shadUi:Window.RightWindowTitleBarContent>
 
-                    <ListBoxItem Tag="Library" AutomationProperties.Name="Library">
-                        <Panel>
-                            <PathIcon Classes="RailIconNormal" Data="{StaticResource IconLibrary}"/>
-                            <PathIcon Classes="RailIconSelected" Data="{StaticResource IconLibraryFilled}"/>
-                        </Panel>
-                    </ListBoxItem>
+    <!-- Skeleton: sidebar + content host -->
+    <Panel>
+        <Grid ColumnDefinitions="Auto,*">
+            <shadUi:Sidebar Grid.Column="0"
+                            Width="220"
+                            MinWidth="60"
+                            Expanded="{Binding #Toggler.IsChecked}"
+                            Padding="{Binding #Toggler.IsChecked,
+                            Converter={x:Static converters:SidebarConverters.Padding}}"
+                            BorderThickness="0,0,1,0"
+                            BorderBrush="{DynamicResource BorderColor30}"
+                            CurrentRoute="{Binding CurrentRoute, Mode=OneWay}">
 
-                    <ListBoxItem Tag="Bookmark" AutomationProperties.Name="Bookmark">
-                        <Panel>
-                            <PathIcon Classes="RailIconNormal" Data="{StaticResource IconBookmark}" />
-                            <PathIcon Classes="RailIconSelected" Data="{StaticResource IconBookmarkFilled}" />
-                        </Panel>
-                    </ListBoxItem>
+                <shadUi:Sidebar.ExpandEasing>
+                    <shadUi:EaseInOutBack BounceIntensity="Strong" />
+                </shadUi:Sidebar.ExpandEasing>
 
-                    <ListBoxItem Tag="History" AutomationProperties.Name="History">
-                        <PathIcon Data="{StaticResource IconHistory}" />
-                    </ListBoxItem>
+                <shadUi:Sidebar.Header>
+                    <ToggleButton Name="Toggler"
+                                  Height="32" Width="32"
+                                  Padding="0"
+                                  IsChecked="False"
+                                  HorizontalAlignment="{Binding #Toggler.IsChecked,
+                                  Converter={x:Static converters:SidebarConverters.ToggleAlignment}}"
+                                  CornerRadius="{DynamicResource LgCornerRadius}"
+                                  Theme="{DynamicResource SideTogglerTheme}"
+                                  ToolTip.Tip="Toggle Sidebar">
+                        <LucideIcon Kind="PanelLeft" Size="16" />
+                    </ToggleButton>
+                </shadUi:Sidebar.Header>
 
-                    <ListBoxItem Tag="Settings" AutomationProperties.Name="Settings">
-                        <Panel>
-                            <PathIcon Classes="RailIconNormal" Data="{StaticResource IconSettings}" />
-                            <PathIcon Classes="RailIconSelected" Data="{StaticResource IconSettingsFilled}" />
-                        </Panel>
-                    </ListBoxItem>
-                </ListBox>
+                <StackPanel Spacing="4">
+                    <shadUi:SidebarItem Content="Home"
+                                        Command="{Binding NavigateCommand}"
+                                        CommandParameter="Home"
+                                        IsChecked="True"
+                                        ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
+                                        Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
+                                        ConverterParameter='Home'}"
+                                        Route="Home">
+                        <shadUi:SidebarItem.Icon>
+                            <LucideIcon Kind="House" Size="16" />
+                        </shadUi:SidebarItem.Icon>
+                    </shadUi:SidebarItem>
 
-            </Grid>
-        </Border>
+                    <shadUi:SidebarItem Content="Library"
+                                        Command="{Binding NavigateCommand}"
+                                        CommandParameter="Library"
+                                        ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
+                                        Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
+                                        ConverterParameter='Library'}"
+                                        Route="Library">
+                        <shadUi:SidebarItem.Icon>
+                            <LucideIcon Kind="Library" Size="16" />
+                        </shadUi:SidebarItem.Icon>
+                    </shadUi:SidebarItem>
 
-        <TextBlock Grid.Column="1"
-                   Text="Yomia Comic Reader Content Area"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   Foreground="{DynamicResource OnSurface}"
-                   Margin="24" />
-    </Grid>
+                    <shadUi:SidebarItem Content="Bookmarks"
+                                        Command="{Binding NavigateCommand}"
+                                        CommandParameter="Bookmarks"
+                                        ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
+                                        Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
+                                        ConverterParameter='Bookmarks'}"
+                                        Route="Bookmarks">
+                        <shadUi:SidebarItem.Icon>
+                            <LucideIcon Kind="Bookmark" Size="16" />
+                        </shadUi:SidebarItem.Icon>
+                    </shadUi:SidebarItem>
 
-</Window>
+                    <shadUi:SidebarItem Content="History"
+                                        Command="{Binding NavigateCommand}"
+                                        CommandParameter="History"
+                                        ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
+                                        Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
+                                        ConverterParameter='History'}"
+                                        Route="History">
+                        <shadUi:SidebarItem.Icon>
+                            <LucideIcon Kind="RotateCcwClock" Size="16" />
+                        </shadUi:SidebarItem.Icon>
+                    </shadUi:SidebarItem>
+                </StackPanel>
+
+                <shadUi:Sidebar.Footer>
+                    <shadUi:SidebarItem Content="Settings"
+                                        Command="{Binding NavigateCommand}"
+                                        CommandParameter="Settings"
+                                        ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
+                                        Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
+                                        ConverterParameter='Settings'}"
+                                        Route="Settings">
+                        <shadUi:SidebarItem.Icon>
+                            <LucideIcon Kind="Settings" Size="16" />
+                        </shadUi:SidebarItem.Icon>
+                    </shadUi:SidebarItem>
+                </shadUi:Sidebar.Footer>
+
+            </shadUi:Sidebar>
+
+            <!-- Content area -->
+            <TransitioningContentControl Grid.Column="1"
+                                         Content="{Binding CurrentPage}" />
+        </Grid>
+    </Panel>
+
+
+</shadUi:Window>
