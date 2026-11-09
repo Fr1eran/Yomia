@@ -100,7 +100,7 @@
                 <StackPanel Spacing="4">
                     <shadUi:SidebarItem Content="Home"
                                         Command="{Binding NavigateCommand}"
-                                        CommandParameter="Home"
+                                        CommandParameter="{x:Static vm:AppSection.Home}"
                                         IsChecked="True"
                                         ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
                                         Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
@@ -113,7 +113,7 @@
 
                     <shadUi:SidebarItem Content="Library"
                                         Command="{Binding NavigateCommand}"
-                                        CommandParameter="Library"
+                                        CommandParameter="{x:Static vm:AppSection.Library}"
                                         ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
                                         Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
                                         ConverterParameter='Library'}"
@@ -125,7 +125,7 @@
 
                     <shadUi:SidebarItem Content="Bookmarks"
                                         Command="{Binding NavigateCommand}"
-                                        CommandParameter="Bookmarks"
+                                        CommandParameter="{x:Static vm:AppSection.Bookmarks}"
                                         ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
                                         Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
                                         ConverterParameter='Bookmarks'}"
@@ -137,7 +137,7 @@
 
                     <shadUi:SidebarItem Content="History"
                                         Command="{Binding NavigateCommand}"
-                                        CommandParameter="History"
+                                        CommandParameter="{x:Static vm:AppSection.History}"
                                         ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
                                         Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
                                         ConverterParameter='History'}"
@@ -151,7 +151,7 @@
                 <shadUi:Sidebar.Footer>
                     <shadUi:SidebarItem Content="Settings"
                                         Command="{Binding NavigateCommand}"
-                                        CommandParameter="Settings"
+                                        CommandParameter="{x:Static vm:AppSection.Settings}"
                                         ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
                                         Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
                                         ConverterParameter='Settings'}"

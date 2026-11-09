@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -7,13 +8,14 @@ namespace Yomia.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(CurrentRoute))]
-    private ViewModelBase? _currentPage;
-
     public MainViewModel()
     {
-        _currentPage = HomeVM;
+        CurrentPage = HomeVm;
     }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentRoute))]
+    public partial ViewModelBase? CurrentPage { get; set; }
 
     public string? CurrentRoute => CurrentPage switch
     {
@@ -25,23 +27,23 @@ public partial class MainViewModel : ViewModelBase
         _ => null
     };
 
-    public HomeViewModel HomeVM { get; } = new();
-    public LibraryViewModel LibraryVM { get; } = new();
-    public BookmarksViewModel BookmarksVM { get; } = new();
-    public HistoryViewModel HistoryVM { get; } = new();
-    public SettingsViewModel SettingsVM { get; } = new();
+    private HomeViewModel HomeVm { get; } = new();
+    private LibraryViewModel LibraryVm { get; } = new();
+    private BookmarksViewModel BookmarksVm { get; } = new();
+    private HistoryViewModel HistoryVm { get; } = new();
+    private SettingsViewModel SettingsVm { get; } = new();
 
     [RelayCommand]
-    private void Navigate(string page)
+    private void Navigate(AppSection section)
     {
-        CurrentPage = page switch
+        CurrentPage = section switch
         {
-            "Home" => HomeVM,
-            "Library" => LibraryVM,
-            "Bookmarks" => BookmarksVM,
-            "History" => HistoryVM,
-            "Settings" => SettingsVM,
-            _ => HomeVM
+            AppSection.Home => HomeVm,
+            AppSection.Library => LibraryVm,
+            AppSection.Bookmarks => BookmarksVm,
+            AppSection.History => HistoryVm,
+            AppSection.Settings => SettingsVm,
+            _ => throw new ArgumentOutOfRangeException(nameof(section), section, "Unknown section")
         };
     }
 
