@@ -8,8 +8,15 @@ namespace Yomia.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    public MainViewModel()
+    public MainViewModel(HomeViewModel homeVm, LibraryViewModel libraryVm, BookmarksViewModel bookmarksVm,
+        HistoryViewModel historyVm, SettingsViewModel settingsVm)
     {
+        HomeVm = homeVm;
+        LibraryVm = libraryVm;
+        BookmarksVm = bookmarksVm;
+        HistoryVm = historyVm;
+        SettingsVm = settingsVm;
+
         CurrentPage = HomeVm;
     }
 
@@ -27,11 +34,11 @@ public partial class MainViewModel : ViewModelBase
         _ => null
     };
 
-    private HomeViewModel HomeVm { get; } = new();
-    private LibraryViewModel LibraryVm { get; } = new();
-    private BookmarksViewModel BookmarksVm { get; } = new();
-    private HistoryViewModel HistoryVm { get; } = new();
-    private SettingsViewModel SettingsVm { get; } = new();
+    private HomeViewModel HomeVm { get; }
+    private LibraryViewModel LibraryVm { get; }
+    private BookmarksViewModel BookmarksVm { get; }
+    private HistoryViewModel HistoryVm { get; }
+    private SettingsViewModel SettingsVm { get; }
 
     [RelayCommand]
     private void Navigate(AppSection section)
