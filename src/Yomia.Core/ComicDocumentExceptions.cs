@@ -1,26 +1,26 @@
 namespace Yomia.Core;
 
 /// <summary>
-/// Comic field abstract exception
+/// Comic document field abstract exception
 /// </summary>
 /// <param name="message"></param>
 /// <param name="inner"></param>
 public abstract class ComicDocumentException(string message, Exception? inner = null) : Exception(message, inner);
 
 /// <summary>
-/// If document is corrupted or the format is invalid.
+/// If the document is corrupted or the format is invalid.
 /// </summary>
 /// <param name="filePath"></param>
 /// <param name="message"></param>
 /// <param name="inner"></param>
 public class ComicDocumentCorruptedException(string filePath, string message, Exception? inner = null)
-    : ComicDocumentException($"File is corrupted or the format is invalid [{filePath}]: {message}", inner)
+    : ComicDocumentException($"Document is corrupted or the format is invalid [{filePath}]: {message}", inner)
 {
     public string FilePath { get; } = filePath;
 }
 
 /// <summary>
-/// If no valid comic image found within the comic document.
+/// If no valid comic image found within the document.
 /// </summary>
 /// <param name="filePath"></param>
 public class ComicDocumentEmptyException(string filePath) : ComicDocumentException($"Empty document: {filePath}")
@@ -44,6 +44,17 @@ public class ComicDocumentPasswordRequiredException(string filePath)
 /// <param name="filePath"></param>
 public class ComicDocumentIncorrectPasswordException(string filePath)
     : ComicDocumentException($"Password is incorrect [{filePath}]")
+{
+    public string FilePath { get; } = filePath;
+}
+
+/// <summary>
+/// If the document or a single page exceeds safety limits.
+/// </summary>
+/// <param name="filePath"></param>
+/// <param name="message"></param>
+public class ComicDocumentLimitExceededException(string filePath, string message) :
+    ComicDocumentException($"Safety limit exceeded [{filePath}]: {message}")
 {
     public string FilePath { get; } = filePath;
 }

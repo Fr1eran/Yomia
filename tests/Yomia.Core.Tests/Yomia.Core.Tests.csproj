@@ -28,4 +28,10 @@
     <ProjectReference Include="..\..\src\Yomia.Core\Yomia.Core.csproj"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Fixtures\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

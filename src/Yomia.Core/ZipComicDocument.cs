@@ -7,38 +7,68 @@ public sealed class ZipComicDocument : IComicDocument
     private readonly ZipArchive _archive;
     private readonly List<ZipArchiveEntry> _imageEntries;
     private readonly SemaphoreSlim _lock = new(1, 1);
-    private bool _disposed;
+    private readonly long _maxPageSize;
+    private bool _disposed = false;
 
-    public ZipComicDocument(string filePath)
+    public ZipComicDocument(string filePath) : this(ComicArchiveHelper.OpenFileStream(filePath))
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
-        FilePath = Path.GetFullPath(filePath);
+    }
 
-        var fileStream = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+    private ZipComicDocument((FileStream Stream, string FilePath) source) : this(source.Stream, source.FilePath)
+    {
+    }
+
+    internal ZipComicDocument(Stream stream, string filePath,
+        int maxEntryCount = ComicArchiveHelper.DefaultMaxEntryCount,
+        long maxPageSize = ComicArchiveHelper.DefaultMaxPageSize)
+    {
+        FilePath = filePath;
+        _maxPageSize = maxPageSize;
+
+        ZipArchive? archive = null;
+
         try
         {
-            // Open the underlying physical stream in read-only shared mode.
-            _archive = new ZipArchive(fileStream, ZipArchiveMode.Read, false);
+            ComicArchiveHelper.ValidateArchiveArguments(stream, filePath, maxEntryCount, maxPageSize);
+            archive = new ZipArchive(stream, ZipArchiveMode.Read, false);
+
+            // This check rejects oversized archives before filtering, sorting,
+            // or keeping the document open.
+            if (archive.Entries.Count > maxEntryCount)
+            {
+                throw new ComicDocumentLimitExceededException(FilePath,
+                    $"Archive entry count ({archive.Entries.Count}) exceeds maximum allowed ({maxEntryCount})");
+            }
 
             // Filter out non-image files, directories, and 0-byte corrupted files.
-            _imageEntries = _archive.Entries
-                .Where(e => e.Length > 0 && ComicArchiveHelper.IsValidImageEntry(e.FullName))
-                .OrderBy(e => e.FullName, ComicArchiveHelper.NaturalPathComparer).ToList();
+            var validEntries =
+                archive.Entries.Where(e => e.Length > 0 && ComicArchiveHelper.IsValidImageEntry(e.FullName))
+                    .ToList();
 
-            if (_imageEntries.Count == 0)
+            if (validEntries.Count == 0)
             {
                 throw new ComicDocumentEmptyException(FilePath);
             }
+
+            if (validEntries.Any(e => e.IsEncrypted))
+            {
+                throw new ComicDocumentPasswordRequiredException(FilePath);
+            }
+
+            _imageEntries = validEntries.OrderBy(e => ComicArchiveHelper.NormalizePath(e.FullName),
+                ComicArchiveHelper.NaturalPathComparer).ToList();
+
+            _archive = archive;
         }
         catch (InvalidDataException ex)
         {
-            fileStream.Dispose();
+            CleanupOnFailure(archive, stream);
             throw new ComicDocumentCorruptedException(FilePath,
                 "ZIP archive data is corrupted or in a non-standard format", ex);
         }
         catch
         {
-            fileStream.Dispose();
+            CleanupOnFailure(archive, stream);
             throw;
         }
     }
@@ -47,14 +77,16 @@ public sealed class ZipComicDocument : IComicDocument
     public int PageCount => _imageEntries.Count;
 
     /// <summary>
-    /// Asynchronously open an independent, seekable image stream for a specified page number.
+    /// Asynchronously open the page stream for a specific page number on demand.
     /// </summary>
     /// <param name="pageIndex"></param>
     /// <param name="ct"></param>
-    /// <returns></returns>
+    /// <returns>A caller-owned, seekable stream at position zero, independent of the document.</returns>
     /// <exception cref="ObjectDisposedException"></exception>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ComicDocumentLimitExceededException"></exception>
     /// <exception cref="ComicDocumentCorruptedException"></exception>
+    /// <exception cref="OperationCanceledException"></exception>
     public async Task<Stream> OpenPageStreamAsync(int pageIndex, CancellationToken ct = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -68,21 +100,18 @@ public sealed class ZipComicDocument : IComicDocument
         await _lock.WaitAsync(ct).ConfigureAwait(false);
         try
         {
-            // Double-check is needed after acquiring the lock
-            // to protect against the document being disposed of
-            // by an external call while the request is waiting
-            // in the queue.
-            ObjectDisposedException.ThrowIf(_disposed, this);
-
             var entry = _imageEntries[pageIndex];
+            if (entry.Length > _maxPageSize)
+            {
+                throw new ComicDocumentLimitExceededException(FilePath,
+                    $"Page {pageIndex} declared size ({entry.Length} bytes) exceeds limit ({_maxPageSize} bytes)");
+            }
+
             await using var entryStream = await entry.OpenAsync(ct).ConfigureAwait(false);
 
-            var memoryStream = new MemoryStream((int)entry.Length);
-            await entryStream.CopyToAsync(memoryStream, ct).ConfigureAwait(false);
-
-            // Reset the cursor for the caller.
-            memoryStream.Position = 0;
-            return memoryStream;
+            return await ComicArchiveHelper.ReadStreamBoundedAsync(
+                    entryStream, FilePath, pageIndex, entry.Length, _maxPageSize, ct)
+                .ConfigureAwait(false);
         }
         catch (InvalidDataException ex)
         {
@@ -94,6 +123,8 @@ public sealed class ZipComicDocument : IComicDocument
         }
     }
 
+    /// <summary>Releases the archive and its synchronization resources.</summary>
+    /// <remarks>Stop submitting reads and await all outstanding read tasks before calling this method.</remarks>
     public void Dispose()
     {
         if (_disposed)
@@ -102,6 +133,21 @@ public sealed class ZipComicDocument : IComicDocument
         }
 
         _disposed = true;
-        _archive?.Dispose();
+        _archive.Dispose();
+        _lock.Dispose();
+    }
+
+    private void CleanupOnFailure(ZipArchive? archive, Stream stream)
+    {
+        if (archive is not null)
+        {
+            archive.Dispose();
+        }
+        else
+        {
+            stream?.Dispose();
+        }
+
+        _lock.Dispose();
     }
 }

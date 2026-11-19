@@ -10,4 +10,8 @@
     <PackageReference Include="SharpCompress" Version="0.50.10"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Yomia.Core.Tests"/>
+  </ItemGroup>
+
 </Project>

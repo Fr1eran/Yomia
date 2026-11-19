@@ -6,7 +6,7 @@ namespace Yomia.Core;
 public interface IComicDocument : IDisposable
 {
     /// <summary>
-    /// The local absolute physical path to the comic document
+    /// The local absolute physical path to the comic document.
     /// </summary>
     string FilePath { get; }
 
@@ -16,7 +16,7 @@ public interface IComicDocument : IDisposable
     int PageCount { get; }
 
     /// <summary>
-    /// Asynchronously open the image stream for a specific page number on demand
+    /// Asynchronously open the page stream for a specific page number on demand.
     /// </summary>
     /// <param name="pageIndex"></param>
     /// <param name="ct"></param>
@@ -30,7 +30,7 @@ public interface IComicDocument : IDisposable
 public interface IComicDocumentFactory
 {
     /// <summary>
-    /// Identify the format and open the comic document asynchronously
+    /// Identify the format and open the comic document asynchronously.
     /// </summary>
     /// <param name="filePath">physical file path</param>
     /// <param name="password">optional password</param>

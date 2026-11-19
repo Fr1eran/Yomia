@@ -48,6 +48,15 @@ public class ComicArchiveHelperTests
 
     #endregion
 
+    [Fact]
+    public async Task ReadStreamBoundedAsync_RejectsActualBytesOverLimitDespiteSmallDeclaredSize()
+    {
+        using var source = new MemoryStream([1, 2, 3, 4, 5]);
+
+        await Assert.ThrowsAsync<ComicDocumentLimitExceededException>(() =>
+            ComicArchiveHelper.ReadStreamBoundedAsync(source, "sample.cbz", 0, 4, 4, CancellationToken.None));
+    }
+
     #region NaturalSort scenarios
 
     [Fact]
@@ -56,17 +65,18 @@ public class ComicArchiveHelperTests
         var entries = new List<string>
         {
             "Vol.02/01.jpg",
-            "Vol.01/10.jpg",
+            "Vol.01\\10.jpg",
             "Vol.01/02.jpg",
-            "Vol.01/01.jpg",
+            "Vol.01\\01.jpg",
         };
 
-        entries.Sort(ComicArchiveHelper.NaturalPathComparer);
+        var orderedEntries = entries.OrderBy(ComicArchiveHelper.NormalizePath, ComicArchiveHelper.NaturalPathComparer)
+            .ToList();
 
-        Assert.Equal("Vol.01/01.jpg", entries[0]);
-        Assert.Equal("Vol.01/02.jpg", entries[1]);
-        Assert.Equal("Vol.01/10.jpg", entries[2]);
-        Assert.Equal("Vol.02/01.jpg", entries[3]);
+        Assert.Equal("Vol.01\\01.jpg", orderedEntries[0]);
+        Assert.Equal("Vol.01/02.jpg", orderedEntries[1]);
+        Assert.Equal("Vol.01\\10.jpg", orderedEntries[2]);
+        Assert.Equal("Vol.02/01.jpg", orderedEntries[3]);
     }
 
     [Fact]
@@ -103,6 +113,34 @@ public class ComicArchiveHelperTests
         Assert.Equal("Page1.WEBP", entries[0]);
         Assert.Equal("page2.png", entries[1]);
         Assert.Equal("PAGE10.JPG", entries[2]);
+    }
+
+    [Fact]
+    public void NaturalSort_DifferOnlyByLeadingZeros()
+    {
+        var entries = new List<string>
+        {
+            "1.jpg",
+            "01.jpg",
+            "001.jpg",
+        };
+        entries.Sort(ComicArchiveHelper.NaturalPathComparer);
+        Assert.Equal("001.jpg", entries[0]);
+        Assert.Equal("01.jpg", entries[1]);
+        Assert.Equal("1.jpg", entries[2]);
+    }
+
+    [Fact]
+    public void NaturalSort_DifferOnlyInCase()
+    {
+        var entries = new List<string>
+        {
+            "cover.jpg",
+            "Cover.jpg"
+        };
+        entries.Sort(ComicArchiveHelper.NaturalPathComparer);
+        Assert.Equal("Cover.jpg", entries[0]);
+        Assert.Equal("cover.jpg", entries[1]);
     }
 
     #endregion
