@@ -17,10 +17,6 @@
                Width="960" Height="600"
                MinWidth="640" MinHeight="420">
 
-    <Design.DataContext>
-        <vm:MainViewModel />
-    </Design.DataContext>
-
     <!-- TitleBar left side -->
     <shadUi:Window.LogoContent>
         <LucideIcon Kind="BookOpen" Size="16" Margin="10,0,0,0" />
@@ -70,77 +66,63 @@
     <Panel>
         <Grid ColumnDefinitions="Auto,*">
             <shadUi:Sidebar Grid.Column="0"
-                            Width="220"
                             MinWidth="60"
-                            Expanded="{Binding #Toggler.IsChecked}"
-                            Padding="{Binding #Toggler.IsChecked,
-                            Converter={x:Static converters:SidebarConverters.Padding}}"
+                            Expanded="False"
+                            Padding="8"
                             BorderThickness="0,0,1,0"
                             BorderBrush="{DynamicResource BorderColor30}"
                             CurrentRoute="{Binding CurrentRoute, Mode=OneWay}">
 
-                <shadUi:Sidebar.ExpandEasing>
-                    <shadUi:EaseInOutBack BounceIntensity="Strong" />
-                </shadUi:Sidebar.ExpandEasing>
-
                 <shadUi:Sidebar.Header>
-                    <ToggleButton Name="Toggler"
-                                  Height="32" Width="32"
-                                  Padding="0"
-                                  IsChecked="False"
-                                  HorizontalAlignment="{Binding #Toggler.IsChecked,
-                                  Converter={x:Static converters:SidebarConverters.ToggleAlignment}}"
-                                  CornerRadius="{DynamicResource LgCornerRadius}"
-                                  Theme="{DynamicResource SideTogglerTheme}"
-                                  ToolTip.Tip="Toggle Sidebar">
-                        <LucideIcon Kind="PanelLeft" Size="16" />
-                    </ToggleButton>
+                    <Button Classes="Icon"
+                            HorizontalAlignment="Center"
+                            Padding="0"
+                            Click="OnOpenComic"
+                            ToolTip.Tip="Open Comic..."
+                            AutomationProperties.Name="Open Comic">
+                        <LucideIcon Kind="FolderOpen" Size="18" />
+                    </Button>
                 </shadUi:Sidebar.Header>
 
                 <StackPanel Spacing="4">
-                    <shadUi:SidebarItem Content="Home"
-                                        Command="{Binding NavigateCommand}"
+
+                    <shadUi:SidebarItemLabel AsSeparator="True" />
+
+                    <shadUi:SidebarItem Command="{Binding NavigateCommand}"
                                         CommandParameter="{x:Static vm:AppSection.Home}"
                                         IsChecked="True"
-                                        ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
-                                        Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
-                                        ConverterParameter='Home'}"
+                                        ToolTip.Tip="Home"
+                                        AutomationProperties.Name="Home"
                                         Route="Home">
                         <shadUi:SidebarItem.Icon>
                             <LucideIcon Kind="House" Size="16" />
                         </shadUi:SidebarItem.Icon>
                     </shadUi:SidebarItem>
 
-                    <shadUi:SidebarItem Content="Library"
-                                        Command="{Binding NavigateCommand}"
+                    <shadUi:SidebarItem Command="{Binding NavigateCommand}"
                                         CommandParameter="{x:Static vm:AppSection.Library}"
-                                        ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
-                                        Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
-                                        ConverterParameter='Library'}"
+                                        ToolTip.Tip="Library"
+                                        AutomationProperties.Name="Library"
                                         Route="Library">
                         <shadUi:SidebarItem.Icon>
                             <LucideIcon Kind="Library" Size="16" />
                         </shadUi:SidebarItem.Icon>
                     </shadUi:SidebarItem>
 
-                    <shadUi:SidebarItem Content="Bookmarks"
-                                        Command="{Binding NavigateCommand}"
+                    <shadUi:SidebarItem Command="{Binding NavigateCommand}"
                                         CommandParameter="{x:Static vm:AppSection.Bookmarks}"
-                                        ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
-                                        Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
-                                        ConverterParameter='Bookmarks'}"
+                                        ToolTip.Tip="Bookmarks"
+                                        AutomationProperties.Name="Bookmarks"
                                         Route="Bookmarks">
                         <shadUi:SidebarItem.Icon>
                             <LucideIcon Kind="Bookmark" Size="16" />
                         </shadUi:SidebarItem.Icon>
                     </shadUi:SidebarItem>
 
-                    <shadUi:SidebarItem Content="History"
-                                        Command="{Binding NavigateCommand}"
+                    <shadUi:SidebarItem Command="{Binding NavigateCommand}"
                                         CommandParameter="{x:Static vm:AppSection.History}"
-                                        ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
-                                        Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
-                                        ConverterParameter='History'}"
+                                        ToolTip.Tip="History"
+                                        AutomationProperties.Name="History"
                                         Route="History">
                         <shadUi:SidebarItem.Icon>
                             <LucideIcon Kind="RotateCcwClock" Size="16" />
@@ -149,12 +131,10 @@
                 </StackPanel>
 
                 <shadUi:Sidebar.Footer>
-                    <shadUi:SidebarItem Content="Settings"
-                                        Command="{Binding NavigateCommand}"
+                    <shadUi:SidebarItem Command="{Binding NavigateCommand}"
                                         CommandParameter="{x:Static vm:AppSection.Settings}"
-                                        ToolTip.Tip="{Binding $parent[shadUi:Sidebar].Expanded,
-                                        Converter={x:Static converters:SidebarConverters.CollapsedToolTip},
-                                        ConverterParameter='Settings'}"
+                                        ToolTip.Tip="Settings"
+                                        AutomationProperties.Name="Settings"
                                         Route="Settings">
                         <shadUi:SidebarItem.Icon>
                             <LucideIcon Kind="Settings" Size="16" />

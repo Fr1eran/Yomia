@@ -12,11 +12,11 @@ public static class ComicArchiveHelper
     private const long MaxInitialMemoryStreamCapacity = 4L * 1024 * 1024; // 4 MiB
 
     /// <summary>
-    /// Whitelist for manga image file extensions
+    /// Whitelist for comic image file extensions
     /// </summary>
     public static readonly HashSet<string> SupportedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
-        ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif", ".avif", ".jxl", ".tif", ".tiff"
+        ".jpg", ".jpeg", ".jfif", ".png", ".webp", ".bmp", ".gif"
     };
 
     private static readonly StringComparer NaturalIgnoreCaseComparer = StringComparer.Create(
@@ -83,7 +83,17 @@ public static class ComicArchiveHelper
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxPageSize);
     }
 
-    /// <summary>Copies a page into an independent stream without writing beyond the byte limit.</summary>
+    /// <summary>
+    /// Copies a page into an independent stream without writing beyond the byte limit.
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="filePath"></param>
+    /// <param name="pageIndex"></param>
+    /// <param name="entrySize"></param>
+    /// <param name="maxPageSize"></param>
+    /// <param name="ct"></param>
+    /// <returns></returns>
+    /// <exception cref="ComicDocumentLimitExceededException"></exception>
     internal static async Task<MemoryStream> ReadStreamBoundedAsync(Stream stream, string filePath, int pageIndex,
         long entrySize, long maxPageSize, CancellationToken ct)
     {
